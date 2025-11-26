@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --tracking-1: 0em;
+  --tracking-2: 0.030em;
+  --tracking-3: 0.05em;
+  --tracking-4: 0.1em;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Coolvetica Font */
+@font-face {
+  font-family: 'Coolvetica';
+  src: url('/fonts/coolvetica.otf') format('opentype'),
+       url('/fonts/coolvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 28s linear infinite;
+}
+
+.flash-image {
+  position: fixed;
+  width: 150px;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
