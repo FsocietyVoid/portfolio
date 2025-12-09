@@ -8,7 +8,7 @@ import Contact from './pages/Contact';
 
 function App() {
   return (
-    <Router>
+    <Router basename='/portfolio'>
       <div className="App">
         <Routes>
           <Route path="/" element={<Landing />} />
