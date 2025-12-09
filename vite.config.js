@@ -6,8 +6,14 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),
     tailwindcss(),
+<<<<<<< HEAD
     
     
     ],
     base: '/portfolio/',
+=======
+    
+    ],
+  base: '/portfolio/',
+>>>>>>> b767e89897e2452bbca5a35ffa2b475b5cbfa502
 })
