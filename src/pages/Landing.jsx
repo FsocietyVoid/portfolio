@@ -6,9 +6,15 @@ function Landing() {
       const yidamRef = useRef(null);
       const studioRef = useRef(null);
       const section2Ref = useRef(null);
-      const [images, setImages] = useState([]);
       const imageIndexRef = useRef(0);
-      const lastImageTimeRef = useRef(0);
+      const section1Ref = useRef(null);
+      const cursorRef = useRef(null);
+      const [isSection1Hovered, setIsSection1Hovered] = useState(false);
+
+
+      const xTo = useRef(null);
+      const yTo = useRef(null);
+      
     
     const imageUrls =[
         'https://picsum.photos/400/400?random=1',
@@ -22,6 +28,7 @@ function Landing() {
     ]
 
   useEffect(() => {
+    
     // Animate "Yidam" - Scale up and fade in with a bounce
     gsap.fromTo(
       yidamRef.current,
@@ -74,6 +81,16 @@ function Landing() {
       ease: "power1.inOut",
       delay: 2.2
     });
+
+     if (cursorRef.current) {
+        // Set initial position and use GSAP's quickTo for performance and smooth trailing
+        gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 });
+        
+        xTo.current = gsap.quickTo(cursorRef.current, "x", { duration: 0.6, ease: "power3" });
+        yTo.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.6, ease: "power3" });
+    }
+
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -127,16 +144,21 @@ function Landing() {
       observer.observe(section2Ref.current);
     }
     return () => observer.disconnect();
+
 }, []);
  
 
-
+  const addToRefs = (el) => {
+      if (el && !imageRefs.current.includes(el)) {
+        imageRefs.current.push(el);
+      }
+    };
   
 
   const handleMouseMove = (e) => {
     // Create new image element as actual img tag
     const imgContainer = document.createElement('div');
-    imgContainer.className = 'flash-image';
+    imgContainer.className = 'flash-image fixed pointer-events-none z-[60]';
     
     const img = document.createElement('img');
     
@@ -184,6 +206,24 @@ function Landing() {
       }
     );
   };
+
+  const handleSection1MouseMove = (e) => {
+    if (xTo.current && yTo.current) {
+        cursorRef.current.style.left = `${e.clientX}px`;
+        cursorRef.current.style.top = `${e.clientY}px`;
+    }
+  };
+
+  const InlineImage = ({ src }) => (
+    <span className="inline-block align-middle mx-2 relative group cursor-pointer" style={{ height: '1em', verticalAlign: 'middle' }}>
+      <img 
+        src={src} 
+        alt="Creative Visual" 
+        className="h-[.8em] w-[1.9em] object-cover rounded-full border border-black transition-all duration-300 ease-out transform group-hover:scale-[2.5] group-hover:z-50 group-hover:shadow-2xl relative z-10"
+      />
+    </span>
+  );
+  
 
   return (
     <div className="Landing w-full overflow-x-hidden">
@@ -248,6 +288,38 @@ function Landing() {
         className="h-screen w-full flex items-center justify-center relative"
         style={{ backgroundColor: '#0000FF' }}
       >
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 30%),
+              radial-gradient(circle at 80% 80%, rgba(0, 200, 255, 0.5) 0%, transparent 40%),
+              radial-gradient(circle at 40% 20%, rgba(100, 150, 255, 0.4) 0%, transparent 35%),
+              radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.3) 0%, transparent 30%),
+              radial-gradient(circle at 90% 30%, rgba(150, 180, 255, 0.4) 0%, transparent 40%)
+            `,
+            filter: 'blur(80px)',
+            animation: 'fluidMove 15s ease-in-out infinite'
+          }}
+        />
+        
+        <style>{`
+          @keyframes fluidMove {
+            0%, 100% {
+              transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            25% {
+              transform: translate(50px, -40px) scale(1.15) rotate(5deg);
+            }
+            50% {
+              transform: translate(-30px, 30px) scale(0.95) rotate(-5deg);
+            }
+            75% {
+              transform: translate(40px, 20px) scale(1.1) rotate(3deg);
+            }
+          }
+        `}</style>
+
         {/* Vertical Navigation - Left Bottom (only in hero section) */}
         <nav className="absolute left-7 bottom-8 z-50">
           <ul className="flex flex-col gap-1 text-white text-4xl tracking-2 "
@@ -317,16 +389,49 @@ function Landing() {
         </div>
       </section>
 
+
+
       {/* Section 1 */}
-      <section className="min-h-screen w-full bg-white flex items-center justify-center p-8">
-        <div className="max-w-6xl">
-          <h2 className="text-5xl font-bold mb-6 text-black">Section 1</h2>
-          <p className="text-xl text-gray-700">
-            Add your content for section 1 here. This could be about your services, 
-            introduction, or any other content you'd like to showcase.
+      <section 
+        ref={section1Ref}
+        onMouseEnter={() => setIsSection1Hovered(true)}
+        onMouseLeave={() => setIsSection1Hovered(false)}
+        onMouseMove={handleSection1MouseMove}
+        className="min-h-screen w-full bg-white flex items-center justify-center p-8 md:p-20 relative overflow-hidden cursor-none" // added cursor-none for better effect
+      >
+        
+        <div 
+          ref={cursorRef}
+          className={`fixed w-48 h-48 rounded-full bg-blue-700/70 transition-opacity duration-300 pointer-events-none ${
+            isSection1Hovered ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ zIndex: 1,
+              backgroundColor: 'rgba(29, 78, 216, 0.7)',
+            transform: 'translate(-50%, -50%)',
+            transition: 'opacity 0.3s ease',
+            filter: 'blur(38px)'
+           }} 
+        />
+
+        
+        <div className="max-w-7xl text-center px-4 relative z-20">
+          <p 
+            className="text-xl md:text-6xl lg:text-8xl font-medium leading-tight text-black"
+            style={{ fontFamily: 'Coolvetica, sans-serif', lineHeight: '0.7' }}
+          >
+            We are the Creative Agency
+            <InlineImage src="https://picsum.photos/300/200?random=20" />
+            that works with the Brands
+            <InlineImage src="https://picsum.photos/300/200?random=21" />
+            with Bold vision,
+            <InlineImage src="https://picsum.photos/300/200?random=22" />
+            Build a best Marketplace value
+            <InlineImage src="https://picsum.photos/300/200?random=23" />
+            to leverage Sales and Exposure.
           </p>
         </div>
       </section>
+
 
       {/* Section 2 */}
             <section 
